@@ -7,7 +7,7 @@
 | `mcp.ts` | Tool schemas, read/write annotations, sanitized results; serializes mutations within each MCP server instance. |
 | `service.ts` | Account/order/search/menu projections. |
 | `cart-service.ts` | Owned open-cart lookup, add/update/remove, option constraints, priced checkout preview/hash. |
-| `ordering-service.ts` | Preview comparison, one-shot placement, operation/payment status. |
+| `ordering-service.ts` | Preview comparison, one-shot placement, saved-account local journal recovery with best-effort live payment status. |
 | `order-operations.ts` | DPAPI-encrypted per-account/cart journal; exclusive synced claim, atomic result replacement. |
 | `browser-client.ts` | Loopback CDP connection, account checks, bounded fixed requests, ambiguous-write errors, detach. |
 | `queries.ts` | Allowlisted GraphQL reads/mutations. |

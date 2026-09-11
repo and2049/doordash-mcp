@@ -3,6 +3,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { describe, expect, it, vi } from 'vitest';
 import { ConsumerService, parseOrders, parseSearch } from '../../../src/consumer/service.js';
 import { createConsumerMcpServer } from '../../../src/consumer/mcp.js';
+import { OrderingService } from '../../../src/consumer/ordering-service.js';
 
 const order = {
   id: '1', orderUuid: 'order-one', createdAt: '2026-09-01', submittedAt: '2026-09-01', cancelledAt: null, fulfilledAt: null,
@@ -43,7 +44,7 @@ describe('consumer reads', () => {
 
   it('keeps read tools marked correctly beside writes, validates bounds and sanitizes provider failures through MCP', async () => {
     const request = vi.fn().mockResolvedValue({ consumer_id: 'test-account', profile_status: 'active', token: 'never-output' });
-    const server = createConsumerMcpServer(new ConsumerService(request));
+    const server = createConsumerMcpServer(new ConsumerService(request), undefined, new OrderingService(request));
     const client = new Client({ name: 'test', version: '1.0' });
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     await server.connect(serverTransport);
@@ -67,6 +68,16 @@ describe('consumer reads', () => {
       const failure = await client.callTool({ name: 'get_consumer_account_status', arguments: {} });
       expect(failure.isError).toBe(true);
       expect(JSON.stringify(failure)).not.toContain('never-output');
+      request.mockClear();
+      const placement = await client.callTool({ name: 'place_order', arguments: {
+        cart_id: 'test-cart', request_id: '00000000-0000-4000-8000-000000000001', preview_hash: 'a'.repeat(64),
+        total_cents: 0, tip_cents: 0, apply_credits: true,
+      } });
+      expect(placement.isError).toBe(true);
+      expect(JSON.stringify(placement)).toContain('Do not call place_order again');
+      expect(JSON.stringify(placement)).toContain('list_consumer_orders');
+      expect(JSON.stringify(placement)).not.toContain('never-output');
+      expect(request).toHaveBeenCalledTimes(1);
     } finally { await client.close(); await server.close(); }
   });
 });

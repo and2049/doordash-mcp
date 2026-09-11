@@ -1,6 +1,6 @@
 {
   "name": "doordash-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "description": "Local consumer DoorDash MCP server with secure browser sessions, cart management, and ordering.",
   "type": "module",

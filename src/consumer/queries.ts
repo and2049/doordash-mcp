@@ -4,12 +4,13 @@ const cartFields = `id subtotal total currencyCode groupCart submittedAt isConsu
 
 export const queries = {
   listCarts: `query listCarts($input: ListCartsInput!) { listCarts(input: $input) { ${cartFields} } }`,
-  checkout: `query checkout($orderCartId: ID!, $isCardPayment: Boolean) {
-    orderCart(id: $orderCartId, isCardPayment: $isCardPayment) {
+  checkout: `query checkout($orderCartId: ID!, $isCardPayment: Boolean, $shouldApplyCredits: Boolean) {
+    orderCart(id: $orderCartId, isCardPayment: $isCardPayment, shouldApplyCredits: $shouldApplyCredits) {
       ${cartFields}
       taxAmount tipAmount merchantTipAmount deliveryFee appliedServiceFee minOrderFee extraSosDeliveryFee fulfillsOwnDeliveries
       containsAlcohol isMerchantShipping isPrescriptionDelivery isBundle isCatering
       selectedDeliveryOption { deliveryOptionType }
+      shouldApplyCredits totalCreditsAvailable { unitAmount currency displayString }
       orders { paymentCard { id } }
       lineItemsList { label finalMoney { unitAmount displayString } }
     }
@@ -22,8 +23,8 @@ export const queries = {
   }`,
   removeCartItemV2: `mutation removeCartItemV2($cartId: ID!, $itemId: ID!) { removeCartItemV2(cartId: $cartId, itemId: $itemId) { id } }`,
   deleteCart: `mutation deleteCart($cartId: ID!) { deleteCart(cartId: $cartId) }`,
-  createOrderFromCart: `mutation createOrderFromCart($cartId: ID!, $total: Int!, $sosDeliveryFee: Int!, $isPickupOrder: Boolean!, $verifiedAgeRequirement: Boolean!, $deliveryTime: String!, $storeId: String, $tipAmounts: [TipAmount!], $paymentMethod: Int, $isCardPayment: Boolean, $deliveryOptionType: DeliveryOptionType) {
-    createOrderFromCart(cartId: $cartId, total: $total, sosDeliveryFee: $sosDeliveryFee, isPickupOrder: $isPickupOrder, verifiedAgeRequirement: $verifiedAgeRequirement, deliveryTime: $deliveryTime, storeId: $storeId, tipAmounts: $tipAmounts, paymentMethod: $paymentMethod, isCardPayment: $isCardPayment, deliveryOptionType: $deliveryOptionType) { cartId orderUuid }
+  createOrderFromCart: `mutation createOrderFromCart($cartId: ID!, $total: Int!, $sosDeliveryFee: Int!, $isPickupOrder: Boolean!, $verifiedAgeRequirement: Boolean!, $deliveryTime: String!, $storeId: String, $tipAmounts: [TipAmount!], $paymentMethod: Int, $isCardPayment: Boolean, $deliveryOptionType: DeliveryOptionType, $shouldApplyCredits: Boolean) {
+    createOrderFromCart(cartId: $cartId, total: $total, sosDeliveryFee: $sosDeliveryFee, isPickupOrder: $isPickupOrder, verifiedAgeRequirement: $verifiedAgeRequirement, deliveryTime: $deliveryTime, storeId: $storeId, tipAmounts: $tipAmounts, paymentMethod: $paymentMethod, isCardPayment: $isCardPayment, deliveryOptionType: $deliveryOptionType, shouldApplyCredits: $shouldApplyCredits) { cartId orderUuid }
   }`,
   pollOrderPaymentStatus: `query pollOrderPaymentStatus($orderId: ID!) { pollOrderPaymentStatus(orderId: $orderId) { paid paymentStatus errorType } }`,
   getConsumerOrdersWithDetails: `query getConsumerOrdersWithDetails($offset: Int!, $limit: Int!, $includeCancelled: Boolean) {

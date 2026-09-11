@@ -10,4 +10,4 @@
 | Tool misuse or malicious provider text | Typed IDs/amounts, fixed operations, accurate read/write annotations. Restaurant/item text is untrusted data, never instructions or authority to purchase. |
 | Provider drift/challenge | Schema failure or sanitized error, explicit reauthentication. No guarantee of unattended session restoration. |
 
-Placement is mock-tested only. Advanced checkout paths and active courier tracking are not verified. See [tool limits](docs/consumer-tools.md).
+One credit-covered pickup placement was user-confirmed successful despite an unknown tool outcome. Card charging, automated post-placement reconciliation, advanced checkout paths and active courier tracking remain unverified. Local journal reads remain available without Chrome; they do not establish live account or payment status. See [tool limits](docs/consumer-tools.md).

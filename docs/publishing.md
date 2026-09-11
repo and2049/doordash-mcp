@@ -1,6 +1,6 @@
 # Publish to npm
 
-Release metadata: `doordash-mcp@0.1.1`, MIT, Windows-only, Node.js 22+. The executable is `doordash-mcp`. Releases are published by CI ([`.github/workflows/publish.yml`](../.github/workflows/publish.yml)) when a `v`-prefixed tag is pushed.
+Release metadata: `doordash-mcp@0.1.2`, MIT, Windows-only, Node.js 22+. Version0.1.1 is already published; 0.1.2 is being prepared. The executable is `doordash-mcp`. Releases are published by CI ([`.github/workflows/publish.yml`](../.github/workflows/publish.yml)) when a `v`-prefixed tag is pushed.
 
 ## Trusted publishing
 
@@ -12,8 +12,8 @@ The npm package is configured for trusted publishing (OIDC) against this reposit
 2. Commit, then create and push the tag — it must match `v` + `package.json` version or the workflow fails:
 
 ```sh
-git tag v0.1.1
-git push origin v0.1.1
+git tag v0.1.2
+git push origin v0.1.2
 ```
 
 The workflow installs dependencies (`npm ci`), runs `lint`, `typecheck` and `test`, verifies the tag matches the package version, then publishes. `prepack` performs a clean build, so the published tarball contains freshly compiled JS, README, LICENSE and docs only.
@@ -21,8 +21,8 @@ The workflow installs dependencies (`npm ci`), runs `lint`, `typecheck` and `tes
 3. Verify the release:
 
 ```sh
-npm view doordash-mcp@0.1.1 version license --registry=https://registry.npmjs.org/
-npx -y doordash-mcp@0.1.1 --help
+npm view doordash-mcp@0.1.2 version license --registry=https://registry.npmjs.org/
+npx -y doordash-mcp@0.1.2 --help
 ```
 
 An already-published name/version cannot be overwritten; a failed attempt alone does not require a version bump.

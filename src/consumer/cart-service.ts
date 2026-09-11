@@ -14,6 +14,8 @@ export const cartSchema = z.object({
   })) })),
 });
 const checkoutSchema = cartSchema.extend({
+  shouldApplyCredits: z.boolean().nullish(),
+  totalCreditsAvailable: z.object({ unitAmount: z.number().int().nonnegative(), currency: text, displayString: text }).nullish(),
   total: z.number().int(),
   taxAmount: z.number().int().nullable(), tipAmount: z.number().int().nullable(), merchantTipAmount: z.number().int().nullable(), deliveryFee: z.number().int().nullable(),
   appliedServiceFee: z.number().int().nullable(), minOrderFee: z.number().int().nullable(), extraSosDeliveryFee: z.number().int().nullable(), fulfillsOwnDeliveries: z.boolean(),
@@ -121,16 +123,20 @@ export class CartService {
     } catch { throw new ConsumerError('MUTATION_OUTCOME_UNKNOWN'); }
   }
 
-  async preview(cartId: string, tip: number, accountId?: string) {
+  async preview(cartId: string, tip: number, accountId?: string, applyCredits?: boolean) {
     accountId ??= await this.accountId();
     const cart = await this.get(cartId, accountId);
     this.editable(cart);
-    const checkout = checkoutSchema.parse(await this.data('checkout', { orderCartId: cartId, isCardPayment: true }, 'orderCart', accountId));
+    const checkout = checkoutSchema.parse(await this.data('checkout', { orderCartId: cartId, isCardPayment: true,
+      ...(applyCredits === undefined ? {} : { shouldApplyCredits: applyCredits }) }, 'orderCart', accountId));
     if (checkout.id !== cartId || checkout.submittedAt) throw new ConsumerError('CART_NOT_EDITABLE');
+    if (applyCredits !== undefined && checkout.shouldApplyCredits !== applyCredits) throw new ConsumerError('CREDITS_SELECTION_NOT_CONFIRMED');
     const total = checkout.total - (checkout.tipAmount ?? 0) + tip;
     if (!Number.isSafeInteger(total) || total < 0 || total > 2_147_483_647) throw new ConsumerError('CHECKOUT_TOTAL_UNAVAILABLE');
-    const fingerprint = createHash('sha256').update(JSON.stringify({ accountId, cart, checkout, tip })).digest('hex');
-    return { cart: checkout, tip_cents: tip, total_cents: total, preview_hash: fingerprint, checked_at: new Date().toISOString() };
+    const fingerprint = createHash('sha256').update(JSON.stringify({ accountId, cart, checkout, tip, applyCredits })).digest('hex');
+    return { cart: checkout, apply_credits: applyCredits ?? null, credits_selected: checkout.shouldApplyCredits ?? null,
+      credits_available: checkout.totalCreditsAvailable ?? null,
+      tip_cents: tip, total_cents: total, preview_hash: fingerprint, checked_at: new Date().toISOString() };
   }
 }
 
