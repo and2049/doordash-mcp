@@ -1,21 +1,35 @@
 # Publish to npm
 
-Release metadata: `doordash-mcp@0.1.1`, MIT, Windows-only, Node.js 22+. The executable is `doordash-mcp`. Publishing is a manual maintainer action.
+Release metadata: `doordash-mcp@0.1.1`, MIT, Windows-only, Node.js 22+. The executable is `doordash-mcp`. Releases are published by CI ([`.github/workflows/publish.yml`](../.github/workflows/publish.yml)) when a `v`-prefixed tag is pushed.
 
-## Authenticate
+## Trusted publishing
 
-Use your own terminal. Verify the npm account email and enable publishing 2FA, then:
+The npm package is configured for trusted publishing (OIDC) against this repository and workflow, so no npm token is stored in GitHub. The workflow publishes with `--provenance --access public`; npm's 2FA prompt does not apply to OIDC publishing.
+
+## Release by tag
+
+1. Update the version consistently in `package.json`, `package-lock.json`, MCP server metadata in `src/consumer/mcp.ts`, and pinned documentation examples.
+2. Commit, then create and push the tag — it must match `v` + `package.json` version or the workflow fails:
 
 ```sh
-npm login --auth-type=web --registry=https://registry.npmjs.org/
-npm whoami --registry=https://registry.npmjs.org/
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
-`whoami` must print your username. If it returns E401, fix authentication before publishing. A publish E404 can indicate access/authentication problems, not just an unavailable name. Never paste tokens or `.npmrc` credentials into logs or chat.
+The workflow installs dependencies (`npm ci`), runs `lint`, `typecheck` and `test`, verifies the tag matches the package version, then publishes. `prepack` performs a clean build, so the published tarball contains freshly compiled JS, README, LICENSE and docs only.
 
-## Pack and publish
+3. Verify the release:
 
-From the source checkout:
+```sh
+npm view doordash-mcp@0.1.1 version license --registry=https://registry.npmjs.org/
+npx -y doordash-mcp@0.1.1 --help
+```
+
+An already-published name/version cannot be overwritten; a failed attempt alone does not require a version bump.
+
+## Local verification
+
+The offline checks can still be run from a source checkout before tagging:
 
 ```sh
 npm ci
@@ -25,16 +39,4 @@ npm run lint
 npm pack
 ```
 
-`prepack` performs a clean build. Review the printed file list: compiled JS, README, LICENSE and docs only. Publish the newly built artifact, not an older tarball:
-
-```sh
-npm publish ./doordash-mcp-0.1.1.tgz --access public --registry=https://registry.npmjs.org/
-npm view doordash-mcp@0.1.1 version license --registry=https://registry.npmjs.org/
-npx -y doordash-mcp@0.1.1 --help
-```
-
-Complete npm's authentication/2FA prompt. Update README release availability after successful publication. [redsun configuration](../README.md#redsun) launches the pinned package through npx.
-
-## Later releases
-
-Update the version consistently in `package.json`, `package-lock.json`, MCP server metadata in `src/consumer/mcp.ts`, and pinned documentation examples. Repeat checks/pack/publish. An already-published name/version cannot be overwritten; a failed attempt alone does not require a version bump.
+Never paste tokens or `.npmrc` credentials into logs or chat. Update README release availability after successful publication. [redsun configuration](../README.md#redsun) launches the pinned package through npx.

@@ -14,7 +14,7 @@ npx -y doordash-mcp@0.1.1 login-help
 
 Or install globally with `npm install --global doordash-mcp@0.1.1`. The package contains compiled JavaScript, agent docs and the MIT license; it requires no TypeScript tooling or browser download.
 
-Before publication, build/install from a [source checkout](https://github.com/and2049/doordash-mcp):
+Releases are published from CI: pushing a `v`-prefixed tag (e.g. `v0.1.1`) runs the publish workflow, which lints, typechecks, tests, builds and publishes to npm with provenance. See [Publishing](docs/publishing.md). To install from a [source checkout](https://github.com/and2049/doordash-mcp) instead:
 
 ```sh
 npm ci
@@ -79,6 +79,6 @@ This downloads the pinned release as needed; no global install is required. Brow
 
 Live source-checkout smoke tests: `npm run consumer:test-reads`; `npm run consumer:test-cart` (optional `-- --options`) **edits a small test cart and cleans up**. Placement is excluded from the test allowlist. Rebuild first.
 
-See [Publishing](docs/publishing.md) for authentication, packing and releasing 0.1.1. Nothing publishes during install/build/tests.
+See [Publishing](docs/publishing.md) for the tag-based release process. Nothing publishes during install/build/tests.
 
 [Tools](docs/consumer-tools.md) · [Architecture](docs/architecture.md) · [Security](SECURITY.md) · [MIT License](LICENSE)
