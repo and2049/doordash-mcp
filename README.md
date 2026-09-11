@@ -1,43 +1,57 @@
-# DoorDash consumer MCP
+# doordash-mcp
 
-Local Windows + Chrome MCP server for account/order reads, restaurant menus, cart edits and checkout previews. `place_order` is implemented with durable duplicate protection but **has not been live-tested**. Other tools have live verification; see [tool guide](docs/consumer-tools.md).
+16 consumer MCP tools for account/orders, restaurants/menus, cart edits, checkout previews and ordering. **Windows + Node.js 22+ + installed Chrome required.** Login uses your manually launched browser; session and operation records are encrypted with Windows DPAPI.
 
-## Start
+`place_order` can charge a saved card. It is mock-tested only; the other workflows have live verification. [Agent tool contract](docs/consumer-tools.md).
 
-Requires Node.js 22+, installed Chrome and Windows PowerShell/DPAPI.
+## Install
+
+The npm package is prepared but **not published to the registry yet**. From a checkout of [this repository](https://github.com/and2049/doordash-mcp), build and install a local package today:
 
 ```sh
-npm install
-npm run build
+npm ci
+npm pack
+npm install --global ./doordash-mcp-0.1.0.tgz
 ```
 
-1. [Launch Chrome manually and sign in](docs/consumer-login.md).
-2. Run `npm run consumer:attach`, then `npm run consumer:verify`.
-3. Keep that Chrome instance open. Configure your MCP client:
+The tarball contains compiled JavaScript and agent docs; installing it requires no TypeScript tooling or browser download. After registry publication, installation becomes `npm install --global doordash-mcp@0.1.0`.
+
+## Connect
+
+```sh
+doordash-mcp login-help
+```
+
+Run the printed PowerShell command yourself, then sign in/MFA in Chrome. Keep its DoorDash tab open:
+
+```sh
+doordash-mcp attach
+doordash-mcp verify
+```
+
+Configure your MCP client:
 
 ```json
 {
   "mcpServers": {
-    "doordash-consumer": {
-      "command": "node",
-      "args": ["C:/path/to/dd-mcp/dist/consumer/index.js"]
+    "doordash": {
+      "command": "doordash-mcp",
+      "args": ["serve"]
     }
   }
 }
 ```
 
-Use your absolute checkout path. No Drive credentials, database, Docker or HTTP OAuth setup is needed. `npm run consumer:mcp` is the development entry point.
+Ensure npm's global bin directory is on the client's PATH. Windows clients may require `doordash-mcp.cmd`. If a client cannot launch command shims, use `node` with the absolute installed path `<npm root -g>/doordash-mcp/dist/cli.js` and `serve`. From a source checkout, use `<checkout>/dist/cli.js` instead.
 
-## Agent workflow
+`serve` is the default command and writes only MCP protocol output to stdout. Session commands: `status`, `verify`, `attach`, `disconnect`, `reset-profile`; see [login/storage](docs/consumer-login.md). There is no HTTP server or database to configure.
 
-`get_consumer_account_status` → `search_restaurants` → `get_restaurant_menu` → `get_menu_item_options` → `add_cart_item` → `get_cart` → `get_checkout_preview`.
+## Development / release
 
-Read [tool contracts and purchase/recovery rules](docs/consumer-tools.md) before making writes. Cart-line IDs differ from menu-item IDs. An ambiguous mutation is not a failed mutation; inspect state before acting again.
+`npm run dev` starts stdio from source; `npm start` uses the build. `npm test`, `npm run typecheck`, `npm run lint`, `npm run build` are offline checks. Build cleans old output. `npm pack` rebuilds and uses an explicit package-file allowlist.
 
-## Checks
+Live source-checkout smoke tests: `npm run consumer:test-reads`; `npm run consumer:test-cart` (optional `-- --options`) **edits a small test cart and cleans up**. Placement is excluded from the test allowlist. Rebuild first.
 
-- `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`: local checks, no real orders.
-- `npm run consumer:test-reads`: six read tools against the connected account.
-- `npm run consumer:test-cart` (optional `-- --options`): **live cart edits**, inexpensive test item, cleanup afterward. Its allowlist excludes placement.
+For a registry release: choose the package name/version and distribution license (currently `UNLICENSED`), inspect `npm pack --dry-run`, then publish explicitly with your npm account. Nothing publishes during install/build/tests.
 
-Rebuild before MCP smoke tests. [Security](SECURITY.md) · [Architecture](docs/architecture.md) · [Legacy Drive server](LEGACY_DRIVE.md).
+[Tools](docs/consumer-tools.md) · [Architecture](docs/architecture.md) · [Security](SECURITY.md)

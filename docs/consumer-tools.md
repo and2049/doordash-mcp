@@ -1,6 +1,6 @@
 # Consumer tools: agent contract
 
-**Runtime:** local Windows stdio, `node dist/consumer/index.js`. Keep manually launched CDP Chrome signed in with a DoorDash tab. `consumer:attach` binds the account; `consumer:verify` checks it live. [Setup](consumer-login.md).
+**Runtime:** local Windows stdio, `doordash-mcp serve` (default). Keep manually launched CDP Chrome signed in with a DoorDash tab. `doordash-mcp attach` binds the account; `doordash-mcp verify` checks it live. [Setup](consumer-login.md).
 
 ## Tools
 

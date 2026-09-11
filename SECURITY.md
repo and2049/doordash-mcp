@@ -7,4 +7,6 @@
 - **Purchases:** placement records are written exclusively and synced before dispatch. One attempt per account/cart, even across process restart. Errors after dispatch become unknown; there is no automatic retry. This is local duplicate suppression, not provider-guaranteed exactly-once delivery. Keep records for reconciliation; deleting them removes duplicate protection.
 - **Disconnect:** deleting the snapshot prevents subsequent calls. Close Chrome separately to stop CDP access and log out at DoorDash to revoke provider sessions. Disconnect does not undo completed/in-flight writes or remove placement records.
 
-Report vulnerabilities privately to maintainers via the hosting platform when available. Include sanitized reproduction steps and revision; never include sessions or personal order data. [Threat model](THREAT_MODEL.md) · [legacy Drive policy](DRIVE_SECURITY.md).
+The npm package includes only compiled JavaScript and documentation. It contains no profile/snapshot/journal, fixture credentials, tests, `.env`, or install-time browser download. Package uninstall does not delete user data.
+
+Report vulnerabilities privately to maintainers via the hosting platform when available. Include sanitized reproduction steps and revision; never include sessions or personal order data. [Threat model](THREAT_MODEL.md).

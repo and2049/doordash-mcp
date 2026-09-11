@@ -1,6 +1,6 @@
 # Consumer architecture
 
-`src/consumer/index.ts` → stdio MCP → fixed operations → same-origin `fetch` in the user's signed-in Chrome via CDP. No Drive runtime/database is initialized.
+`src/cli.ts` is the package executable (`dist/cli.js`). Its default `serve` command starts stdio MCP; other commands manage the session or print manual login instructions. `src/consumer/` contains the consumer implementation. Runtime dependencies are the MCP SDK, Playwright Core and Zod.
 
 | File in `src/consumer/` | Responsibility |
 | --- | --- |
@@ -17,4 +17,6 @@ Placement flow: live account → existing journal lookup → refreshed preview m
 
 Mutations in different MCP processes or the browser can still race; the durable claim specifically prevents duplicate server placement for one cart. The provider is authoritative for availability, final pricing and charge outcome.
 
-Contracts: [consumer-tools.md](consumer-tools.md). Historical implementation: [drive-architecture.md](drive-architecture.md), [legacy setup](../LEGACY_DRIVE.md).
+Package flow: `npm pack` → clean TypeScript build → allowlisted compiled JS/docs. No install-time scripts or browser download. Persistent data lives outside the package under the Windows user profile. Source tests and live smoke scripts are not shipped.
+
+Contracts: [consumer-tools.md](consumer-tools.md). Setup: [README](../README.md).

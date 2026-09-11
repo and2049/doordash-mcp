@@ -3,7 +3,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { z } from 'zod';
 
 const client = new Client({ name: 'consumer-read-verification', version: '0.1.0' });
-const transport = new StdioClientTransport({ command: process.execPath, args: ['dist/consumer/index.js'], stderr: 'pipe' });
+const transport = new StdioClientTransport({ command: process.execPath, args: ['dist/cli.js', 'serve'], stderr: 'pipe' });
 async function call(name: string, args: Record<string, unknown> = {}): Promise<unknown> {
   const result = await client.callTool({ name, arguments: args });
   if (result.isError) throw new Error(`${name} failed`);

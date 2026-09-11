@@ -6,7 +6,7 @@ import { cartSchema } from '../src/consumer/cart-service.js';
 const allowed = new Set(['list_carts', 'get_cart', 'search_restaurants', 'get_restaurant_menu', 'get_menu_item_options', 'add_cart_item',
   'update_cart_item', 'remove_cart_item', 'clear_cart', 'get_checkout_preview', 'get_order_operation', 'list_consumer_orders', 'get_order_payment_status']);
 const client = new Client({ name: 'cart-test', version: '0.1.0' });
-const transport = new StdioClientTransport({ command: process.execPath, args: ['dist/consumer/index.js'], stderr: 'pipe' });
+const transport = new StdioClientTransport({ command: process.execPath, args: ['dist/cli.js', 'serve'], stderr: 'pipe' });
 async function call(name: string, args: Record<string, unknown> = {}): Promise<unknown> {
   if (!allowed.has(name)) throw new Error('Tool forbidden in live cart test');
   const result = await client.callTool({ name, arguments: args });
