@@ -2,7 +2,7 @@
   "name": "doordash-mcp",
   "version": "0.1.0",
   "private": true,
-  "description": "Production-minded, read-only MCP server for authorized DoorDash delivery status updates.",
+  "description": "Local consumer DoorDash MCP server with secure browser sessions, cart management, and ordering.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -19,7 +19,18 @@
     "test:watch": "vitest",
     "db:migrate": "tsx src/db/migrate.ts",
     "seed:dev": "tsx scripts/seed-dev.ts",
-    "simulate:webhook": "tsx scripts/simulate-webhook.ts"
+    "simulate:webhook": "tsx scripts/simulate-webhook.ts",
+    "consumer:connect": "tsx scripts/consumer-session.ts connect",
+    "consumer:open": "tsx scripts/consumer-session.ts open",
+    "consumer:status": "tsx scripts/consumer-session.ts status",
+    "consumer:disconnect": "tsx scripts/consumer-session.ts disconnect",
+    "consumer:persistent": "tsx scripts/consumer-session.ts persistent",
+    "consumer:reset-profile": "tsx scripts/consumer-session.ts reset-profile",
+    "consumer:attach": "tsx scripts/consumer-session.ts attach",
+    "consumer:mcp": "tsx src/consumer/index.ts",
+    "consumer:verify": "tsx scripts/consumer-session.ts verify",
+    "consumer:test-reads": "tsx scripts/verify-consumer-tools.ts",
+    "consumer:test-cart": "tsx scripts/verify-consumer-cart-tools.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
@@ -30,6 +41,7 @@
     "pg": "^8.23.0",
     "pino": "^10.3.1",
     "pino-pretty": "^13.1.3",
+    "playwright-core": "^1.63.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
