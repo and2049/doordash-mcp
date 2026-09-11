@@ -2,7 +2,7 @@
 
 After installing the package, run `doordash-mcp login-help`. It prints a manual PowerShell launch command using installed Chrome, a dedicated profile, and loopback CDP port 9222. Close any Chrome already using that profile, run the command yourself, and finish login/MFA in Chrome.
 
-Without a global install, use `npx -y doordash-mcp@0.1.2 <command>` for each CLI command once that version is published. For example, `npx -y doordash-mcp@0.1.2 attach`. This uses the same saved account/profile as a global or source installation.
+Without a global install, use `npx -y doordash-mcp@0.1.3 <command>` for each CLI command. For example, `npx -y doordash-mcp@0.1.3 attach`. This uses the same saved account/profile as a global or source installation.
 
 Then run `doordash-mcp attach` and `doordash-mcp verify`. Attach verifies the account, encrypts its binding/session, and detaches without closing Chrome. Keep a signed-in DoorDash tab open while agents use the tools. No automated login or browser download is performed.
 

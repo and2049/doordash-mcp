@@ -8,20 +8,20 @@ Checkout and placement accept optional `apply_credits: true`/`false`; use the sa
 
 ## Install
 
-Version **0.1.1 is published**; these instructions target the upcoming **0.1.2** release. After 0.1.2 is published, run without a global install:
+Install **0.1.3** without a global install:
 
 ```sh
-npx -y doordash-mcp@0.1.2 login-help
+npx -y doordash-mcp@0.1.3 login-help
 ```
 
-Or install globally with `npm install --global doordash-mcp@0.1.2`. The package contains compiled JavaScript, agent docs and the MIT license; it requires no TypeScript tooling or browser download.
+Or install globally with `npm install --global doordash-mcp@0.1.3`. The package contains compiled JavaScript, agent docs and the MIT license; it requires no TypeScript tooling or browser download.
 
-Releases are published from CI: pushing a `v`-prefixed tag (e.g. `v0.1.2`) runs the publish workflow, which lints, typechecks, tests, builds and publishes to npm with provenance. See [Publishing](docs/publishing.md). To install from a [source checkout](https://github.com/and2049/doordash-mcp) instead:
+Releases are published from CI: pushing a `v`-prefixed tag (e.g. `v0.1.3`) runs the publish workflow, which lints, typechecks, tests, builds and publishes to npm with provenance. See [Publishing](docs/publishing.md). To install from a [source checkout](https://github.com/and2049/doordash-mcp) instead:
 
 ```sh
 npm ci
 npm pack
-npm install --global ./doordash-mcp-0.1.2.tgz
+npm install --global ./doordash-mcp-0.1.3.tgz
 ```
 
 ## Connect
@@ -30,7 +30,7 @@ npm install --global ./doordash-mcp-0.1.2.tgz
 doordash-mcp login-help
 ```
 
-The commands in this section assume a global or local-tarball installation; otherwise replace `doordash-mcp` with `npx -y doordash-mcp@0.1.2`. Run the printed PowerShell command yourself, then sign in/MFA in Chrome. Keep its DoorDash tab open:
+The commands in this section assume a global or local-tarball installation; otherwise replace `doordash-mcp` with `npx -y doordash-mcp@0.1.3`. Run the printed PowerShell command yourself, then sign in/MFA in Chrome. Keep its DoorDash tab open:
 
 ```sh
 doordash-mcp attach
@@ -65,7 +65,7 @@ Merge into `~/.config/redsun/redsun.jsonc` (global) or the project's `redsun.jso
     "servers": {
       "doordash": {
         "type": "local",
-        "command": ["npx", "-y", "doordash-mcp@0.1.2", "serve"],
+        "command": ["npx", "-y", "doordash-mcp@0.1.3", "serve"],
         "timeout": { "startup": 60000 }
       }
     }
@@ -83,7 +83,7 @@ This downloads the pinned release as needed; no global install is required. Brow
 4. Call `place_order` **once**. After any result, error or timeout, check `get_order_operation` and `list_consumer_orders`. Compare purchase time, restaurant, items and fulfillment; use the exact order UUID when returned. Do not infer success merely from a similar order, or failure from missing history.
 5. If history reads fail, ask the user to check DoorDash's Orders page. Never call placement again or recreate the cart to bypass the journal. `get_order_operation` can read the local record without Chrome and retains known order IDs when payment polling fails.
 
-0.1.2 adds explicit credits selection, the zero-due/zero-tip credit-covered checkout exception to the saved-card requirement, and clearer one-shot recovery. Card charging, automatic recovery of an unknown order UUID and full pickup setup remain unverified or incomplete; see [the tool contract](docs/consumer-tools.md).
+0.1.3 includes explicit credits selection, the zero-due/zero-tip credit-covered checkout exception to the saved-card requirement, clearer one-shot recovery, and the trusted-publishing fix following the failed 0.1.2 release. Card charging, automatic recovery of an unknown order UUID and full pickup setup remain unverified or incomplete; see [the tool contract](docs/consumer-tools.md).
 
 ## Development / release
 

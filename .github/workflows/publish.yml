@@ -17,10 +17,13 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+      - run: npm install --global npm@11.10.1
+      - run: npm --version
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: test "v$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME}"
         shell: bash
+      - run: npm run build
       - run: npm publish --provenance --access public
